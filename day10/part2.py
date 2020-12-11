@@ -18,7 +18,7 @@ class HashSet(object):
             yield a
       
     def key(self, obj):
-      return np.array(obj).tostring()
+      return hash(np.array(obj).tobytes())
 
     def add(self, obj):
       key = self.key(obj)
@@ -63,6 +63,7 @@ class HashSet(object):
         if len(v) > 0:
           return False
       return True
+    
       
     def depth(self):
       depth = 0
@@ -82,12 +83,17 @@ class HashSet(object):
           del self.hash[k][idx]
 
 
-def validate(data):
+def validate(data, left_val=None, right_val=None):
   if len(data) == 0:
     return False
   potential = data[0]
-  for i in range(1,len(data)):
-    d = data[i]
+  if left_val is not None:
+    potential = left_val
+  cache = data
+  if right_val is not None:
+    cache = np.array(list(cache) + [right_val])
+  for i in range(1,len(cache)):
+    d = cache[i]
     diff = d - potential
     if diff > 3 or diff <= 0:
       return False

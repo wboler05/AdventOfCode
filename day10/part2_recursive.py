@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
 
+'''
+Recursive Divide and Conquer - works faster than bruteforce
+Takes a bunch of memory (maxes my 32GB)
+Death of a system can incur
+Have a swapfile...
+'''
+
 import argparse, os, sys
 import numpy as np
 from part2 import HashSet, validate, load_data
 
 import tqdm
 
-def sweep(data):
+sweep_depth = 20
+
+def sweep(data, left_val=None, right_val=None):
   print(data)
   found_set = HashSet()
   if not validate(data):
@@ -24,23 +33,24 @@ def sweep(data):
       for i in range(0, len(search_list)):
         check = np.delete(search_list, i)
         if check not in found_set:
-          if validate(check):
+          if validate(check, left_val, right_val):
             #print("Valid Arr: {}".format(check))
             search_set.add(check)
   return found_set
 
 
-def search_valid(data):
+def search_valid(data, left_val=None, right_val=None):
+  global sweep_depth
   print(data)
 
-  if len(data) <= 20:
-    return sweep(data)
+  if len(data) <= sweep_depth:
+    return sweep(data, left_val, right_val)
   else:
     m = int(len(data) / 2)
     print(" - Left Search")
-    left_set = search_valid(data[:m])
+    left_set = search_valid(data[:m], left_val, None)
     print(" - Right Search")
-    right_set = search_valid(data[m:])
+    right_set = search_valid(data[m:], None, right_val)
     #print(" - m({}):\t{}, {}".format(m,len(left_set), len(right_set)))
     print('{} to {}'.format(data[0], data[-1]))
     found_set = HashSet()
@@ -61,6 +71,8 @@ def search_valid(data):
           found_set.add(arr)
     p.close()
     print("Complete {} to {}".format(data[0], data[-1]))
+    del left_set
+    del right_set
     return found_set
 
 def count_correct(found_set, first_element, final_element):
@@ -72,9 +84,14 @@ def count_correct(found_set, first_element, final_element):
 
 
 def main():
+  global sweep_depth
+
   parser = argparse.ArgumentParser()
   parser.add_argument("input_filename", type=str)
+  parser.add_argument("--sweep-depth", "-d", type=int, default=sweep_depth)
   args = parser.parse_args()
+  assert(args.sweep_depth >= 5)
+  sweep_depth = args.sweep_depth
   
   data = load_data(args.input_filename)
   
