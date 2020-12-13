@@ -57,7 +57,7 @@ if __name__ == '__main__':
     #parser.add_argument("--waypoint", "-w", nargs=2, type=int, default=(1,1))
     args = parser.parse_args()
 
-    pattern = "^(?P<direction>\w)(?P<digits>[\d]+)$"
+    pattern = r"^(?P<direction>\w)(?P<digits>[\d]+)$"
 
     with open(args.input_filename, 'r') as ifile:
         data = ifile.read().split('\n')
