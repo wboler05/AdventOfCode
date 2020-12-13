@@ -89,12 +89,21 @@ def main():
   parser = argparse.ArgumentParser()
   parser.add_argument("input_filename", type=str)
   parser.add_argument("--sweep-depth", "-d", type=int, default=sweep_depth)
+  parser.add_argument("-n", type=int, default=None)
   args = parser.parse_args()
   assert(args.sweep_depth >= 5)
   sweep_depth = args.sweep_depth
   
   data = load_data(args.input_filename)
+  print("Data: {}".format(len(data)))
+
+  if args.n is not None:
+      n = min(len(data), max(args.n, 0))
+      data = data[:n]
   
+  import time
+  start_time = time.clock()
+
   found_set = search_valid(data)
   print("Correcting found set")
   #for s in found_set:
@@ -103,6 +112,9 @@ def main():
   #for s in found_set:
   #  print(" - {}".format(s))
   print("Valid Count: {}".format(valid_count))
+
+  end_time = time.clock()
+  print("Time: {} seconds".format(end_time - start_time))
 
 if __name__ == '__main__':
   main()
