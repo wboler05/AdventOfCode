@@ -12,6 +12,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("input_filename", type=str)
     parser.add_argument("--chunk-size", "-n", type=int, default=50000)
+    parser.add_argument("--start-chunk-idx", "-c", type=int, default=0)
     args = parser.parse_args()
 
     data = None
@@ -25,10 +26,14 @@ def main():
     numbers = [int(d) for d in data if d != 'x']
     shifts = { int(d): i for i,d in enumerate(data) if d != 'x'}
     ratios = { n : float(n) / float(numbers[0]) for n in numbers }
-    counts = { n : np.ceil(float(ratios[n])*float(chunks_n)).astype(int) for n in numbers }
+    counts = { n : np.ceil(float(ratios[n])*float(chunks_n)).astype(np.uint64) for n in numbers }
     offset = { n : 1 for n in numbers}
 
+    #start_offset = np.floor(np.prod(numbers) / chunks_n).astype(np.uint64)
+
     p = tqdm.tqdm()
+    #offset = { n : offset[n] + (counts[n]*start_offset) for n in numbers }
+
     while True:
         p.update(counts[numbers[0]])
         arrs = { n : np.arange(offset[n], c+offset[n])*n-shifts[n] for n,c in counts.items()}
