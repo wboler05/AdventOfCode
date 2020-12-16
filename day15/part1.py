@@ -2,6 +2,7 @@
 
 import argparse, os, sys
 import numpy as np
+import tqdm
 
 def load_data(input_filename):
     assert(os.path.exists(input_filename))
@@ -11,34 +12,21 @@ def load_data(input_filename):
         data = [int(d) for d in data if len(d) > 0]
     assert(len(data) > 0)
     return data
-
-
-def update_memo(memo):
-    for k,v in memo.items():
-        memo[k] += 1
-    return memo
+    
 
 def get_nth_number(input_vec, n):
-    #print("Input Vector: {}".format(input_vec))
     memo = {}
     cur_num = None
-    for i in range(n-1):
+    for i in tqdm.tqdm(range(n-1)):
         if i < len(input_vec):            
             cur_num = input_vec[i]
-
-        #print("Turn({}): Current Number: {}".format(i+1, cur_num))
         if cur_num not in memo:
-            #print(" - Not seen")
-            memo[cur_num] = 0
+            memo[cur_num] = i
             cur_num = 0
-            #if i < len(input_vec):
-            #    print(" - Load Value")
         else:
-            delta = memo[cur_num]
-            #print(" - Delta: {}".format(delta))
-            memo[cur_num] = 0
+            delta = i - memo[cur_num]
+            memo[cur_num] = i
             cur_num = delta
-        memo = update_memo(memo)
     return cur_num
 
 def get_2020th_number(input_vec):
