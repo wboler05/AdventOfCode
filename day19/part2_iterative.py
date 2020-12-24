@@ -47,7 +47,50 @@ def extract_rules(rule_data):
 
     return rules
 
-step = 0
+
+class Twee(object):
+    def __init__(self, rule_idx=-1, rule=dict(), leaves=list()):
+        self.leaves = leaves
+        self.rule_idx = rule_idx
+        self.rule_dict = rule
+
+def expand_rules_iterative(rules, rule_idx, max_message_size):
+
+    from collections import deque
+
+    print("Total rules available: {}".format(len(rules)))
+    print("Rule Idx: {}".format(rule_idx))
+
+    rule_set = set()
+    discover = deque()
+    
+    root = Twee(str(rule_idx), rules[rule_idx])
+    discover.append(root)
+
+    print(rules)
+
+    i = 0
+    while len(discover) > i <= max_message_size:
+        rule_node = discover.popleft()
+        
+        rule_dict = rules[cur_rule_idx]
+        print("i({}) : Rule({}) :: {}".format(i, cur_rule_idx, rule_dict))
+        if 'letter' in rule_dict:
+            # Append a letter to all subsets
+            letter = rule_dict['letter']
+        else:
+            # Breadth search on rules
+            rule_list = rule_dict['rule_list']
+            if len(rule_list) > 0:
+                # OR condition exists
+
+        print(rules[cur_rule_idx])
+        break
+
+
+    return rule_set
+
+
 def expand_rules(rules, rule_idx, max_message_size):
     global step
     #print(step, max_message_size)
@@ -96,7 +139,8 @@ def process_rules(rules, msg_data, max_message_size, rule_numbers = [ 0 ]):
     valid_messages = set(range(len(msg_data)))
 
     for rule_idx in rule_numbers:
-        valid_message_set = expand_rules(rules, rule_idx, max_message_size)
+        #valid_message_set = expand_rules(rules, rule_idx, max_message_size)
+        valid_message_set = expand_rules_iterative(rules, rule_idx, max_message_size)
         for i,msg in enumerate(msg_data):
             if msg not in valid_message_set:
                 valid_messages.remove(i)
