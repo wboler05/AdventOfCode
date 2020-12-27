@@ -5,6 +5,7 @@ import numpy
 import re
 
 def load_data(input_filename):
+    print("Loading data from file: {}".format(input_filename))
     assert(os.path.exists(input_filename))
     data = None
     with open(input_filename, 'r') as ifile:
@@ -12,6 +13,8 @@ def load_data(input_filename):
     return data
 
 def parse_data(data):
+    print("Parsing read data")
+
     allergen_pattern = r"^(?P<ingredient_list>[\w\s]+)(?:\(contains )(?P<allergen_list>[\w\s,]+)(?:\))$"
     master_ingredients_list = list()
     for row in data:
@@ -34,6 +37,8 @@ def parse_data(data):
 
 
 def reduce_ingredients(allergen_dict):
+
+    print("Reducing allergen sets")
 
     learned_allergens = dict()
 
@@ -63,6 +68,8 @@ def reduce_ingredients(allergen_dict):
 
 
 def generate_allergen_dict(ingredient_list):
+    print("Generating allergen dictionary")
+
     allergen_dict = dict()
     for ingredients,allergens in ingredient_list:
         if len(allergens) > 0:
@@ -100,6 +107,24 @@ def get_allergen_data_from_file(input_filename):
     return allergen_dict, master_ingredient_list
     
 
+def count_non_allergens(master_ingredients_list, allergen_dict):
+    allergen_ingredient_set = set()
+    for allergen, ingredient in allergen_dict.items():
+        allergen_ingredient_set.add(ingredient)
+
+    non_allergen_counts = dict()
+    for ingredients, _ in master_ingredients_list:
+        for ingredient in ingredients:
+            if ingredient not in allergen_ingredient_set:
+                if ingredient not in non_allergen_counts:
+                    non_allergen_counts[ingredient] = 1
+                else:
+                    non_allergen_counts[ingredient] += 1
+    
+    return non_allergen_counts
+
+
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -108,11 +133,17 @@ def main():
 
     allergen_dict, master_ingredient_list = get_allergen_data_from_file(args.input_filename)
 
-    #non_allergens_dict = count_non_allergens(master_ingredient_list, allergen_dict)
-
     print("Learned Allergens:")
     for k,v in allergen_dict.items():
         print(" - {}: {}".format(k,v))
+
+    non_allergens_dict = count_non_allergens(master_ingredient_list, allergen_dict)
+    print("\nNon Allergen Counts:")
+    na_sum = 0
+    for k,v in non_allergens_dict.items():
+        print(" - {}: {}".format(k, v))
+        na_sum += v
+    print("Non Allergen Sum: {}".format(na_sum))
 
     
 
