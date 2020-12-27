@@ -25,8 +25,7 @@ def load_data(input_filename):
     return player_cards
 
 
-def play_game(player_cards):
-
+def build_cards(player_cards):
     player_1, player_2 = deque(), deque()
 
     for card in player_cards[1]:
@@ -34,8 +33,10 @@ def play_game(player_cards):
 
     for card in player_cards[2]:
         player_2.append(card)
+    return player_1, player_2
 
-    def get_deck(deck):
+
+def get_deck_str(deck):
         s = ""
         for i,d in enumerate(deck):
             s += "{}".format(d)
@@ -43,12 +44,15 @@ def play_game(player_cards):
                 s += ", "
         return s
 
+
+def play_game(player_1, player_2):
+
     round = 1
     while True:
         print("-- Round {} --".format(round))
 
-        print("Player 1's deck: {}".format(get_deck(player_1)))
-        print("Player 2's deck: {}".format(get_deck(player_2)))
+        print("Player 1's deck: {}".format(get_deck_str(player_1)))
+        print("Player 2's deck: {}".format(get_deck_str(player_2)))
 
         card1 = player_1.popleft()
         print("Player 1 plays: {}".format(card1))
@@ -71,8 +75,8 @@ def play_game(player_cards):
         round += 1
 
     print("== Post-game results ==")
-    print("Player 1's deck: {}".format(get_deck(player_1)))
-    print("Player 2's deck: {}".format(get_deck(player_2)))
+    print("Player 1's deck: {}".format(get_deck_str(player_1)))
+    print("Player 2's deck: {}".format(get_deck_str(player_2)))
 
     if len(player_1) > 0:
         print("Player 1 Wins!")
@@ -94,8 +98,7 @@ def main():
     parser.add_argument('input_filename', type=str)
     args = parser.parse_args()
 
-    player_cards = load_data(args.input_filename)
-    play_game(player_cards)
+    play_game(*build_cards(load_data(args.input_filename)))
 
 if __name__ == '__main__':
     main()
