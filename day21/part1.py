@@ -145,6 +145,15 @@ def main():
         na_sum += v
     print("Non Allergen Sum: {}".format(na_sum))
 
+    sorted_allergens = [ v for k,v in sorted(allergen_dict.items(), key=lambda s: s[0]) ]
+
+    print("Canonical allergen sorted:")
+    for i,a in enumerate(sorted_allergens):
+        print("{}".format(a), end="")
+        if i != len(sorted_allergens)-1:
+            print(",",end="")
+    print()
+
     
 
 if __name__ == '__main__':
